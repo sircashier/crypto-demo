@@ -136,11 +136,20 @@
       </div>
     </div>
     <aside class="notes">
-      <h3>What’s happening</h3>
-      <ul>
-        <li><b>Sign:</b> the message is hashed, and the private key turns that hash into a signature. (ECDSA, P-256 curve.)</li>
-        <li><b>Verify:</b> anyone with the public key can check that signature against the message.</li>
-      </ul>
+      <h3>How a signature works</h3>
+      <p><b>Signing (Eunice):</b></p>
+      <ol>
+        <li>Hash the message to get its fingerprint.</li>
+        <li>Sign that fingerprint with her <b>private</b> key. That’s the signature.</li>
+        <li>Send the message and the signature together. The message itself isn’t hidden.</li>
+      </ol>
+      <p><b>Verifying (anyone):</b></p>
+      <ol>
+        <li>Hash the message they received.</li>
+        <li>Check the signature against it using her <b>public</b> key.</li>
+        <li>Match: valid. No match: invalid.</li>
+      </ol>
+      <p>Change one character and the hash changes, so the check fails. Only her private key makes signatures her public key accepts. (Textbooks describe this as “encrypting the hash”. This demo’s scheme, ECDSA on the P-256 curve, is a sign/verify operation instead.)</p>
       <h3>Try these</h3>
       <ul>
         <li>Change ₱100 to ₱999 and keep the signature: <b>invalid</b> (integrity).</li>
