@@ -88,6 +88,8 @@
     <aside class="notes">
       <h3>What is a collision?</h3>
       <p>Two <em>different</em> inputs that produce the <em>same</em> hash. They must exist (endless inputs, a limited number of hashes), so the real question is whether anyone can <em>find</em> one. If they can, a hash or signature on a harmless file would also vouch for a fake.</p>
+      <h3>The birthday paradox</h3>
+      <p>In a room of just <b>23</b> people there’s a better than 50% chance two share a birthday. You’re not comparing people to <em>you</em>; you’re comparing <em>everyone to everyone</em> (23 people make 253 pairs). Hashes work the same way: each new message is checked against all earlier ones, so a collision shows up after about 2<sup>n/2</sup> tries. Finding someone who shares <em>your</em> birthday takes about 253 people, like matching one specific message.</p>
       <h3>What’s happening</h3>
       <p>The program hashes random messages, remembers every hash it has seen, and stops when two <em>different</em> messages share one.</p>
       <ul>
