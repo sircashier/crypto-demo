@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hashes and Signatures Lab</title>
+<meta name="description" content="Interactive demos for cryptographic hash functions and digital signatures. Everything runs in your browser.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Hashes &amp; Signatures Lab</h1>
+  <nav aria-label="Demos">
+    <a href="#hash">1 · Hash playground</a>
+    <a href="#collision">2 · Collision hunt</a>
+    <a href="#sign">3 · Sign &amp; verify</a>
+  </nav>
+</header>
+
+<main>
+<!-- ============ 1. HASH PLAYGROUND ============ -->
+<section id="hash">
+  <h2>1 · Hash playground</h2>
+  <div class="grid">
+    <div class="panel">
+      <label for="msgA">Message</label>
+      <textarea id="msgA" rows="2" spellcheck="false">Hello, Cryptology!</textarea>
+      <div class="hashline"><span class="tag">SHA-256</span> <code id="hashA" class="hex"></code></div>
+      <p class="meta" id="lenA"></p>
+
+      <label for="msgB">Compare with (change one letter!)</label>
+      <textarea id="msgB" rows="2" spellcheck="false">Hello, cryptology!</textarea>
+      <div class="hashline"><span class="tag">SHA-256</span> <code id="hashB" class="hex"></code></div>
+
+      <div class="diff">
+        <div class="bar" role="img" aria-label="Fraction of bits that differ"><div id="diffFill"></div><div class="mid"></div></div>
+        <p id="diffText" class="big"></p>
+      </div>
+
+      <hr>
+      <label for="published">Is my copy the real one? Paste the published hash</label>
+      <input id="published" type="text" spellcheck="false" placeholder="paste a 64-character hash, then see if it matches the message above">
+      <p id="checkResult" class="status" aria-live="polite"></p>
+      <button id="usePublished" type="button" class="ghost">Pretend the hash of the message above is the published one, then edit the message</button>
+    </div>
+    <aside class="notes">
+      <h3>What’s happening</h3>
+      <p>A hash function turns <em>any</em> input into a fixed-size fingerprint: 256 bits, shown as 64 hex characters.</p>
+      <ul>
+        <li><b>Same input, same hash.</b> Always.</li>
+        <li><b>Avalanche effect.</b> Change one letter and about half of the 256 bits flip (roughly 128). Characters that differ are highlighted.</li>
+        <li><b>Any length in, same size out.</b> Try one letter, then paste a whole paragraph.</li>
+      </ul>
+      <h3>Why it matters</h3>
+      <p>Comparing two short hashes tells you whether two big files are identical, which is how a published checksum protects a download. But a hash can’t tell you <em>who</em> published it. That is what demo 3 fixes.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ 2. COLLISION HUNT ============ -->
+<section id="collision">
+  <h2>2 · Collision hunt</h2>
+  <div class="grid">
+    <div class="panel">
+      <p>We can’t break real SHA-256, so we cut it down to the first <b>n</b> bits and attack that.</p>
+      <div class="modes" role="radiogroup" aria-label="Attack type">
+        <label class="radio"><input type="radio" name="mode" value="collision" checked> Find <b>any two</b> messages with the same hash</label>
+        <label class="radio"><input type="radio" name="mode" value="target"> Match <b>one specific</b> message</label>
+      </div>
+      <p id="targetBox" class="meta" hidden>Target: <code>Pay Eunice ₱100</code></p>
+      <label for="bits">Hash size: <b id="bitsLabel">16</b> bits &nbsp;<span class="meta" id="bitsOutputs"></span></label>
+      <input id="bits" type="range" min="8" max="32" value="16">
+      <div class="row">
+        <button id="run" type="button">Run</button>
+        <button id="stop" type="button" class="ghost" disabled>Stop</button>
+      </div>
+      <div class="counter">
+        <div><span class="meta">Attempts</span><b id="attempts">0</b></div>
+        <div><span class="meta">Predicted</span><b id="predicted">256</b></div>
+      </div>
+      <div id="found" class="found" hidden aria-live="polite"></div>
+      <table id="history" hidden>
+        <caption>Your runs</caption>
+        <thead><tr><th>Attack</th><th>Bits</th><th>Attempts</th><th>Predicted</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <aside class="notes">
+      <h3>What’s happening</h3>
+      <p>The program hashes random messages, remembers every hash it has seen, and stops when two <em>different</em> messages share one.</p>
+      <ul>
+        <li><b>Any collision:</b> about 2<sup>n/2</sup> tries (the birthday paradox: every message is compared against all earlier ones).</li>
+        <li><b>Match one given message:</b> about 2<sup>n</sup> tries, since each try has a single chance in 2<sup>n</sup> of hitting.</li>
+      </ul>
+      <p>Run both at the same size and compare the counts. Your numbers will differ from your neighbour’s, since the messages are random. “Around” is the right word.</p>
+      <h3>Why it matters</h3>
+      <p>Real SHA-256 has n = 256, so a collision needs about 2<sup>128</sup> tries. No computer on Earth gets there.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ 3. SIGN & VERIFY ============ -->
+<section id="sign">
+  <h2>3 · Sign, verify, tamper</h2>
+  <div class="grid">
+    <div class="panel">
+      <h3 class="step"><span>1</span> Eunice makes a key pair</h3>
+      <button id="genKeys" type="button">Generate Eunice’s keys</button>
+      <div id="keyBox" hidden>
+        <p class="meta">Public key (share with everyone)</p>
+        <code id="pubKey" class="hex small"></code>
+        <p class="meta">Private key: stays with Eunice, never leaves this page.</p>
+      </div>
+
+      <h3 class="step"><span>2</span> She signs a message</h3>
+      <input id="signMsg" type="text" value="Pay Eunice ₱100" spellcheck="false" disabled aria-label="Message to sign">
+      <button id="signBtn" type="button" disabled>Sign with private key</button>
+      <div id="sigBox" hidden>
+        <p class="meta">Signature</p>
+        <code id="sigOut" class="hex small"></code>
+      </div>
+
+      <h3 class="step"><span>3</span> The receiver checks it</h3>
+      <p class="meta">Edit the message below, as an attacker would, and watch the result.</p>
+      <input id="recvMsg" type="text" spellcheck="false" disabled aria-label="Message the receiver got">
+      <p id="verifyResult" class="badge idle" aria-live="polite">Waiting for a signature</p>
+
+      <h3 class="step"><span>4</span> Be the forger</h3>
+      <p class="meta">Sign the message above with <em>your own</em> key instead.</p>
+      <button id="forgeBtn" type="button" disabled class="warn">Forge a signature</button>
+      <div id="forgeBox" hidden>
+        <div class="forgerow"><span>Checked against <b>Eunice’s</b> public key</span><p id="forgeVsEunice" class="badge"></p></div>
+        <div class="forgerow"><span>Checked against the <b>forger’s own</b> public key</span><p id="forgeVsForger" class="badge"></p></div>
+      </div>
+    </div>
+    <aside class="notes">
+      <h3>What’s happening</h3>
+      <ul>
+        <li><b>Sign:</b> the message is hashed, and the private key turns that hash into a signature. (ECDSA, P-256 curve.)</li>
+        <li><b>Verify:</b> anyone with the public key can check that signature against the message.</li>
+      </ul>
+      <h3>Try these</h3>
+      <ul>
+        <li>Change ₱100 to ₱999 and keep the signature: <b>invalid</b> (integrity).</li>
+        <li>Forge a signature with your own key: <b>invalid</b> for Eunice. It only verifies under the forger’s key, so only Eunice’s private key could have produced a signature her public key accepts (authentication).</li>
+      </ul>
+      <h3>Why it matters</h3>
+      <p>A hash told us whether the data changed. A signature also tells us <em>who</em> signed it, and because only she holds the key, she can’t easily deny it (non-repudiation).</p>
+    </aside>
+  </div>
+</section>
+</main>
+
+<footer>Everything runs in your browser. Nothing you type is sent anywhere.</footer>
+
+<script src="sha256.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
