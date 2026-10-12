@@ -1,4 +1,4 @@
-# Hashes & Signatures Lab
+# Interactive Visual Demo
 
 Interactive demos for a class talk on cryptographic hash functions and digital signatures. Static site, everything runs in the browser.
 
