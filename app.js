@@ -5,7 +5,8 @@ const hex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0'))
 const fmt = (n) => Math.round(n).toLocaleString('en-US');
 
 /* ============ 1. Hash playground ============ */
-function hashOf(s) { return hex(sha256(enc.encode(s))); }
+const ALGOS = { sha256: ['SHA-256', sha256], sha3: ['SHA3-256', sha3_256] };
+function hashOf(s) { return hex(ALGOS[$('algo').value][1](enc.encode(s))); }
 
 function bitDiff(a, b) {
   let n = 0;
@@ -30,6 +31,7 @@ function paintHex(el, str, other) {
 }
 
 function updateHash() {
+  document.querySelectorAll('.algoTag').forEach((t) => { t.textContent = ALGOS[$('algo').value][0]; });
   const a = hashOf($('msgA').value);
   const b = hashOf($('msgB').value);
   const same = a === b;
@@ -59,6 +61,7 @@ function checkPublished() {
   }
 }
 
+$('algo').addEventListener('change', updateHash);
 $('msgA').addEventListener('input', updateHash);
 $('msgB').addEventListener('input', updateHash);
 $('published').addEventListener('input', checkPublished);

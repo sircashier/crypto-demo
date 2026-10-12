@@ -23,14 +23,20 @@
   <h2>1 · Hash playground</h2>
   <div class="grid">
     <div class="panel">
+      <label for="algo">Hash algorithm</label>
+      <select id="algo">
+        <option value="sha256">SHA-256 (SHA-2 family)</option>
+        <option value="sha3">SHA3-256 (SHA-3 family)</option>
+      </select>
+
       <label for="msgA">Message</label>
       <textarea id="msgA" rows="2" spellcheck="false">Hello, Cryptology!</textarea>
-      <div class="hashline"><span class="tag">SHA-256</span> <code id="hashA" class="hex"></code></div>
+      <div class="hashline"><span class="tag algoTag">SHA-256</span> <code id="hashA" class="hex"></code></div>
       <p class="meta" id="lenA"></p>
 
       <label for="msgB">Compare with (change one letter!)</label>
       <textarea id="msgB" rows="2" spellcheck="false">Hello, cryptology!</textarea>
-      <div class="hashline"><span class="tag">SHA-256</span> <code id="hashB" class="hex"></code></div>
+      <div class="hashline"><span class="tag algoTag">SHA-256</span> <code id="hashB" class="hex"></code></div>
 
       <div class="diff">
         <div class="bar" role="img" aria-label="Fraction of bits that differ"><div id="diffFill"></div><div class="mid"></div></div>
@@ -167,6 +173,7 @@
 <footer>Everything runs in your browser. Nothing you type is sent anywhere.</footer>
 
 <script src="sha256.js"></script>
+<script src="sha3.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
